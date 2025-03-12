@@ -2,18 +2,27 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const pool = require('./database');
+
+// make sure this comes AFTER dotenv config
+const productsRouter = require('./routes/products');
+
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors()); // only works for web-site
+// only works for web-site
+app.use(cors()); 
 
-// Routes
 app.get('/', (req, res) => {
   res.json({ 
     message: "Welcome to the API" 
     });
 });
+
+// Routes
+// If a request which URL begin with '/api/prodcuts
+app.use('/api/products', productsRouter);
 
 // Start the server
 // we can specify the PORT in the .env file
