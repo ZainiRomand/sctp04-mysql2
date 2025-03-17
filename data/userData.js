@@ -13,6 +13,13 @@ async function getUserById(userId) {
     return rows[0];
 }
 
+// `SELECT * FROM users 
+// JOIN user_marketing_preferences 
+// ON users.id = user_marketing_preferences.user_id 
+// JOIN marketing_preferences 
+// ON user_marketing_preferences.preference_id = marketing_preferences.id
+// WHERE users.id = ?`, [userId]);
+
 async function createUser(name, email, password, salutation, country, marketingPreferences) {
     // validate to make that name, email and password
     if (!name || !email || !password || name.length > 100) {

@@ -61,11 +61,20 @@ router.post('/login', async (req, res) => {
 // user profile route: display the profile of the updated user
 router.get('/me', AuthenticateWithJWT, async (req, res) => {
     const user = await userService.getUserDetailsById(req.userId);
-    res.json(
-        {
-            'user': user
-        }
-    )
+    try {
+        res.json(
+            {
+                'user': user
+            }
+        )
+    } catch (e) {
+        res.status(401).json(
+            {
+                'message': 'User not found',
+                'user': ''
+            }
+        )
+    }
 })
 
 // user profile route: update the profile of the updated user

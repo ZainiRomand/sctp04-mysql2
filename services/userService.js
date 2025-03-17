@@ -23,8 +23,7 @@ async function loginUser(email, password) {
     // get the user by email
     const user = await userData.getUserByEmail(email);
 
-    if ( user !== null && user !== undefined)
-    {
+    if (user !== null && user !== undefined) {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             throw new Error("Invalid email or password");
@@ -39,13 +38,26 @@ async function getUserDetailsById(userId) {
     // - security (redact)
     // - marketing 
     const user = await userData.getUserById(userId);
-    return {
-        name: user.name,
-        email: user.email,
-        salutation: user.salutation ,
-        id: user.id,
-        country: user.country
-    };
+    if (user !== null && user !== undefined) {
+        return {
+            name: user.name,
+            email: user.email,
+            salutation: user.salutation,
+            id: user.id,
+            country: user.country
+        };
+    } else {
+        console.log("Record not found");
+        throw new Error("Invalid email or password");
+    }
+
+    // return {
+    //     name: user.name,
+    //     email: user.email,
+    //     salutation: user.salutation,
+    //     id: user.id,
+    //     country: user.country
+    // };
 }
 
 async function updateUserDetails(id, userDetails) {
@@ -55,7 +67,6 @@ async function updateUserDetails(id, userDetails) {
         userDetails.salutation,
         userDetails.country,
         userDetails.marketingPreferences
-
     )
 }
 
@@ -64,8 +75,8 @@ async function deleteUser(id) {
 }
 
 module.exports = {
-    registerUser, 
-    loginUser, 
+    registerUser,
+    loginUser,
     getUserDetailsById,
     updateUserDetails,
     deleteUser
