@@ -39,12 +39,23 @@ async function getUserDetailsById(userId) {
     // - marketing 
     const user = await userData.getUserById(userId);
     if (user !== null && user !== undefined) {
+
+        const preferences = await userData.getUserMarketingPreferencesById(userId);
+        const marketingPreferences = [];
+        if (preferences !== null && preferences !== undefined)
+        {
+            for (let p of preferences) {
+                marketingPreferences.push(p.preference)
+            }
+        }
+
         return {
             name: user.name,
             email: user.email,
             salutation: user.salutation,
             id: user.id,
-            country: user.country
+            country: user.country,
+            marketingPreferences: marketingPreferences
         };
     } else {
         console.log("Record not found");

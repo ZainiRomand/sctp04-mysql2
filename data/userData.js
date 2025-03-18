@@ -9,10 +9,24 @@ async function getUserByEmail(email) {
 }
 
 async function getUserById(userId) {
-    const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+    //const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+    // return rows[0];
+    const [rows] = await pool.query(
+        `SELECT * FROM users 
+        WHERE users.id = ?`, [userId]);
     return rows[0];
 }
 
+async function getUserMarketingPreferencesById(userId) {
+    const [rows] = await pool.query(
+        `SELECT marketing_preferences.preference FROM user_marketing_preferences 
+        JOIN marketing_preferences 
+        ON user_marketing_preferences.preference_id = marketing_preferences.id 
+        WHERE user_marketing_preferences.user_id = ?`, [userId]);
+    return rows;
+}
+
+// const [rows] = await pool.query(
 // `SELECT * FROM users 
 // JOIN user_marketing_preferences 
 // ON users.id = user_marketing_preferences.user_id 
@@ -163,6 +177,7 @@ module.exports = {
     createUser,
     getUserByEmail,
     getUserById,
+    getUserMarketingPreferencesById,
     updateUser,
     deleteUser
 }

@@ -99,8 +99,6 @@ router.delete('/:id', AuthenticateWithJWT, async (req, res) => {
             'message': 'error deleteing user'
         })
     }
-
-
 })
 
 module.exports = router;
