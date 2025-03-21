@@ -5,6 +5,8 @@ require('dotenv').config();
 // router files
 const productsRouter = require('./routes/products.js')
 const userRouter = require('./routes/users');
+const cartRoutes = require('./routes/cart');
+const checkoutRoutes = require('./routes/checkout');
 
 const app = express();
 
@@ -24,8 +26,10 @@ app.get("/", (req,res)=>{
 // Register the product routers
 // if a request which URL begins with '/api/products',
 // the remainder of the URL will be sent to productsRouter
-app.use('/api/products', productsRouter)
+app.use('/api/products', productsRouter);
 app.use('/api/users', userRouter);
+app.use('/api/cart', cartRoutes);
+app.use('/api/checkout', checkoutRoutes);
 
 // we can specify the PORT in the .env file
 // PORT => virtual port, usually meant for networking
