@@ -5,13 +5,14 @@ require('dotenv').config();
 // router files
 const productsRouter = require('./routes/products.js')
 const userRouter = require('./routes/users');
-const cartRoutes = require('./routes/cart');
-const checkoutRoutes = require('./routes/checkout');
+const cartRouter = require('./routes/cart.js')
+const checkoutRouter = require('./routes/checkout.js');
+const stripeRouter = require('./routes/stripe.js');
 
 const app = express();
 
 // middlewares
-app.use(express.json());
+// app.use(express.json()); --> MUST DISABLE IF USING STRIPE WEBHOOK
 // if off, a frontend must be on the same domain to access your api
 // backend is hosted on example.com
 // then frotend is hosted on xyz.example.com to access or example.com/xyz.html
@@ -26,10 +27,13 @@ app.get("/", (req,res)=>{
 // Register the product routers
 // if a request which URL begins with '/api/products',
 // the remainder of the URL will be sent to productsRouter
-app.use('/api/products', productsRouter);
-app.use('/api/users', userRouter);
-app.use('/api/cart', cartRoutes);
-app.use('/api/checkout', checkoutRoutes);
+app.use('/api/products', express.json(), productsRouter)
+app.use('/api/users', express.json(), userRouter);
+app.use('/api/cart', express.json(), cartRouter);
+app.use('/api/checkout', express.json(), checkoutRouter);
+
+// For the webhook routes, DO NOT apply the express.json() middleware
+app.use('/stripe', stripeRouter);
 
 // we can specify the PORT in the .env file
 // PORT => virtual port, usually meant for networking
