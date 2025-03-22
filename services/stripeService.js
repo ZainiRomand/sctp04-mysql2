@@ -18,7 +18,6 @@ async function createCheckoutSession(userId, orderItems, orderId) {
         }
     });
 
-    
     // this is the session data that we will send to the user
     // and the user can use this to make payment at Stripe
     return session;
