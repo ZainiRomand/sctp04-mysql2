@@ -11,7 +11,7 @@ async function createCheckoutSession(userId, orderItems, orderId) {
         mode: 'payment',
         //success_url: "https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/success_payment",
         //cancel_url:"https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/cancelled_payment",
-        // Set add port 3000 http private
+        // Set add port 3000 http private. Below are forward port for frontend
         success_url: "https://1l7p5667-5173.asse.devtunnels.ms/success_payment",
         cancel_url:"https://1l7p5667-5173.asse.devtunnels.ms/cancelled_payment",
         // store customized data which stripe doesn't provide for in metadata
