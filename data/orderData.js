@@ -6,38 +6,44 @@ async function getOrdersByUserId(userId) {
 }
 
 // orderItems is an array of objects
+// Each order item is an object with the following keys
+// - product_id : which product it is for
+// - quantity: how many to buy
 async function createOrder(userId, orderItems) {
     const connection = await pool.getConnection();
     try {
+        
         await connection.beginTransaction();
 
-        // Calculate total order amount
-        //const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        // calculate the total of the order
         let total = 0;
         for (let o of orderItems) {
             total += o.price * o.quantity;
         }
 
-        // Insert order data
-        const [orderResult] = await connection.query("INSERT INTO orders (user_id, total) VALUES (?, ?)", [userId, total]);
-        const orderId = orderResult.insertId; // Getting ID of last created order
+        // create the order row in the orders table
+        const [orderResult] = await connection.query(`INSERT INTO orders (user_id, total)
+                VALUES (?, ?)
+            `, [userId, total]);
 
-        // Insert order items
+        // get the ID of the last created order
+        const orderId = orderResult.insertId; // --> insertId is the ID of the new row
         for (const item of orderItems) {
             await connection.query(
-                'INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)',
+                `INSERT INTO order_items (order_id, product_id, quantity) VALUES(?, ?, ?)`,
                 [orderId, item.product_id, item.quantity]
-            );
+            )
         }
 
-        // Commit changes to database
+        // make all changes to the database so far permanent
         await connection.commit();
         return orderId;
-    } catch (error) {
+
+    } catch (e) {
         await connection.rollback();
-        throw error;
+        throw (e);
     } finally {
-        connection.release();
+        await connection.release();
     }
 }
 
@@ -57,17 +63,21 @@ async function getOrderDetails(orderId) {
 }
 
 async function updateOrderStatus(orderId, status) {
-    // validate status before updating
+
+    // validate status before updatingOrderStatus
     if (!['pending', 'created', 'processing', 'completed', 'cancelled'].includes(status)) {
         throw new Error('Invalid status');
     }
-    await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+
+    await pool.query(`UPDATE orders SET status = ? WHERE id = ?`, [status, orderId]);
 }
 
-// Update happen when STRIPE return payment session
 async function updateOrderSessionId(orderId, sessionId) {
-    await pool.query('UPDATE orders SET checkout_session_id = ? WHERE id = ?', [sessionId, orderId]);
+    await pool.query(
+        `UPDATE orders SET checkout_session_id = ? WHERE id = ?`, [sessionId, orderId]
+    )
 }
+
 
 module.exports = {
     getOrdersByUserId,
@@ -75,4 +85,4 @@ module.exports = {
     getOrderDetails,
     updateOrderStatus,
     updateOrderSessionId
-};
+}

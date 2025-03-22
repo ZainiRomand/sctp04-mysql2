@@ -32,7 +32,7 @@ router.post('/webhook',
             // process the checkout is successful event
             const session = event.data.object;
             if (session.metadata && session.metadata.orderId && session.metadata.userId) {
-                await orderService.updateOrderStatus(session.metadata.orderId, "processing");
+                await orderService.updateOrderStatus(session.metadata.orderId, "completed");
             }
             console.log(session.metadata);
         }
