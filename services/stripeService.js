@@ -6,11 +6,14 @@ async function createCheckoutSession(userId, orderItems, orderId) {
     console.log("lineItems =>", lineItems);
     // 2nd parameter of stripe.checkout.sessions.create is the configuration of checkout
     const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'], 
+        payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',
-        success_url: "https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/success_payment",
-        cancel_url:"https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/cancelled_payment",
+        //success_url: "https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/success_payment",
+        //cancel_url:"https://5173-zainiromand-sctp04ecomm-5ct3hvhpjh5.ws-us118.gitpod.io/cancelled_payment",
+        // Set add port 3000 http private
+        success_url: "https://1l7p5667-5173.asse.devtunnels.ms/success_payment",
+        cancel_url:"https://1l7p5667-5173.asse.devtunnels.ms/cancelled_payment",
         // store customized data which stripe doesn't provide for in metadata
         metadata: {
             userId: userId,
@@ -24,17 +27,17 @@ async function createCheckoutSession(userId, orderItems, orderId) {
 }
 
 function createLineItems(orderItems) {
- 
-    const lineItems =  [];
+
+    const lineItems = [];
     for (let item of orderItems) {
         // structure of a line item in Stripe
         const lineItem = {
-            'price_data':{
-                'currency':'sgd',
-                'product_data':{
+            'price_data': {
+                'currency': 'sgd',
+                'product_data': {
                     'name': item.productName,
                     'images': [item.imageUrl || 'https://placehold.co/400'],
-                    'metadata':{
+                    'metadata': {
                         'product_id': item.product_id
                     }
                 },
